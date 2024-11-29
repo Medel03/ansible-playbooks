@@ -1,0 +1,48 @@
+- name: Create a disk
+  gcp_compute_disk:
+    name: "disk-instance-{{ iteration }}"  # Unique disk name for each iteration
+    size_gb: 10
+    source_image: projects/debian-cloud/global/images/debian-12-bookworm-v20241009
+    zone: "{{ gcp_zone }}"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_cred_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+    state: present
+  register: disk
+
+- name: Create an address
+  gcp_compute_address:
+    name: address-instance-{{ iteration }}  # Unique address name for each iteration
+    region: "{{ gcp_region }}"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_cred_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+    state: present
+  register: address
+
+- name: Create an instance
+  gcp_compute_instance:
+    name: "ansible-vm-100{{ random_integer }}"
+    project: "{{ gcp_project }}"
+    zone: "{{ gcp_zone }}"
+    machine_type: e2-micro
+    disks:
+      - auto_delete: 'true'
+        boot: 'true'
+        source: "{{ disk }}"
+    labels:
+      environment: testing
+    network_interfaces:
+      - network:
+          name: "default"
+        access_configs:
+          - name: External NAT
+            nat_ip: "{{ address }}"
+            type: ONE_TO_ONE_NAT
+    auth_kind: serviceaccount
+    service_account_file: "{{ gcp_cred_file }}"
+    state: present
+
+
+
+

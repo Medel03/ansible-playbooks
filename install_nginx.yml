@@ -1,0 +1,28 @@
+---
+- name: configurer un serveur avec nginx
+  hosts: vms
+  become: true
+
+  tasks:
+    # mettre à jour le
+    - name: Mettre à jour jour la sliste des paquets
+      apt:
+        update_cache: yes
+
+    # Installer Nginx
+    - name: Installer le paquet nginx
+      apt: 
+        name: nginx
+        state: present
+
+    # Copier un fichier index.html
+    - name: Déployer la page web
+      copy:
+        src: ./index.html
+        dest: /var/www/html/index.html
+
+    #redémmarer Nginx
+    - name: Redémmarer le service nginx
+      service: 
+        name: nginx
+        state: restarted

@@ -1,0 +1,23 @@
+---
+- name: Main playbook to loop and include pcreate-gcp-instances-ii.yml playbook
+  hosts: localhost
+  connection: local
+  become: false
+  gather_facts: no
+  vars:
+    loop_count: 2  # Change this to the number of iterations you want
+
+  tasks:
+    - name: Loop through create-gcp-instances-ii.yml playbook multiple times
+      include_tasks: create-gcp-instances-ii.yml
+      loop: "{{ range(1, loop_count + 1) | list }}"
+      loop_control:
+        loop_var: iteration
+      vars:
+        random_integer: "{{ 1 + (100000 | random) }}"  # Generate a new random integer for each iteration
+        gcp_project: "praxis-deck-437908-i4"
+        gcp_cred_kind: "serviceaccount"
+        gcp_cred_file: "./praxis-deck-437908-i4-b197dfd2933b.json"
+        gcp_region: "us-central1"
+        gcp_zone: "us-central1-f"
+

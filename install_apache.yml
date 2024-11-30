@@ -1,9 +1,0 @@
----
-- name: Installer Apache sur les serveurs web
-  hosts: vms
-  become: true  
-  tasks:
-    - name: Installer Apache
-      apt:
-        name: apache2
-        state: present

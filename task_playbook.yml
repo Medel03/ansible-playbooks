@@ -1,5 +1,0 @@
----
-- name: Display a message
-  debug:
-    msg: "This is execution number {{ iteration }}"
-
